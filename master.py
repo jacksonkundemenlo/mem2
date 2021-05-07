@@ -24,6 +24,7 @@ import sys
 
 import numpy
 from keras.models import Sequential
+from keras.models import load_model
 from keras.layers import Dense
 from keras.layers import Dropout
 from keras.layers import LSTM
@@ -38,6 +39,7 @@ datadf['lenth_caption'] = datadf['1'].apply(len)
 datadf['clean_caption'] = datadf['1'].apply(clean_caption)
 
 datadf = datadf[datadf['0'] == 155067746]
+# datadf = datadf[datadf['0'] == 222403160]
 data = ' '.join(datadf['clean_caption'])
 data = data.split()
 # print(data)
@@ -56,7 +58,7 @@ words = sorted(list(set(data)))
 char_to_int = dict((c, i) for i, c in enumerate(words))
 
 char_to_int[' '] = len(char_to_int)
-print(char_to_int)
+# print(char_to_int)
 
 
 
@@ -85,7 +87,7 @@ for i in range(0, n_words - seq_length, 1):
     dataX.append([char_to_int[word] for word in seq_in])
     dataY.append(char_to_int[seq_out])
 n_patterns = len(dataX)
-print ("Total Patterns: ", n_patterns)
+# print ("Total Patterns: ", n_patterns)
 
 # reshape X to be [samples, time steps, features]
 X = numpy.reshape(dataX, (n_patterns, seq_length, 1))
@@ -107,16 +109,19 @@ model.compile(loss='categorical_crossentropy', optimizer='adam')
 
 # define the checkpoint
 filepath= "weights-improvement-{epoch:02d}-{loss:.4f}--1layerclean.hdf5"
-checkpoint = ModelCheckpoint(filepath, monitor='loss', verbose=1, save_best_only=True, mode='min', period = 50)
+checkpoint = ModelCheckpoint(filepath, monitor='loss', verbose=1, save_best_only=True, mode='min', period = 10)
 callbacks_list = [checkpoint]
 
+# continue earlier training
+# model = load_model("weights-improvement-250-0.9334--1layerclean.hdf5")
 
-model.fit(X, y, epochs=250, batch_size=128, callbacks=callbacks_list)
+
+# model.fit(X, y, epochs=1000, batch_size=128, callbacks=callbacks_list)
 
 
 
 # load the network weights
-filename = "weights-improvement-39-4.2134--1layerclean.hdf5"
+filename = "weights-improvement-260-0.4991--1layerclean.hdf5"
 model.load_weights(filename)
 model.compile(loss='categorical_crossentropy', optimizer='adam')
 
@@ -132,19 +137,20 @@ int_to_char = dict((i, c) for i, c in enumerate(words))
 # pattern.append([char_to_int[word] for word in start])
 # pick a random seed
 
-# start = numpy.random.randint(0, len(dataX)-1)
-# pattern = dataX[start]
-# print ("Seed:")
-# print (''.join([int_to_char[value] for value in pattern]))
-# # generate characters
-# for i in range(20):
-# 	x = numpy.reshape(pattern, (1, len(pattern), 1))
-# 	x = x / float(n_vocab)
-# 	prediction = model.predict(x, verbose=0)
-# 	index = numpy.argmax(prediction)
-# 	result = int_to_char[index]
-# 	seq_in = [int_to_char[value] for value in pattern]
-# 	sys.stdout.write(result + ' ')
-# 	pattern.append(index)
-# 	pattern = pattern[1:len(pattern)]
-# print ("\nDone.")
+start = numpy.random.randint(0, len(dataX)-1)
+pattern = dataX[start]
+print ("Seed:")
+print (''.join([int_to_char[value] for value in pattern]))
+print('\nNew meme alert:')
+# generate characters
+for i in range(25):
+	x = numpy.reshape(pattern, (1, len(pattern), 1))
+	x = x / float(n_vocab)
+	prediction = model.predict(x, verbose=0)
+	index = numpy.argmax(prediction)
+	result = int_to_char[index]
+	seq_in = [int_to_char[value] for value in pattern]
+	sys.stdout.write(result + ' ')
+	pattern.append(index)
+	pattern = pattern[1:len(pattern)]
+print ("\nDone.")
