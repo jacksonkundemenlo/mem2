@@ -20,8 +20,8 @@ def clean_caption(caption):
     #     caption = (90-len(caption)) * 'ඞ' + caption
     caption = str(caption)
     caption = caption.translate(str.maketrans('', '', string.punctuation.replace(';', '')))
-    # if '||' in caption:
-    #     caption = caption.replace('||', ' ')
+    if ';' in caption:
+        caption = caption.replace(';', ' ; ')
     # if caption[-1] == '|':
     #     caption = caption[:-1]
     # if '|' in caption:
@@ -57,6 +57,8 @@ def train_caption(meme_name, meme_ID, epochs, datadf=datadf, continue_model=None
     words = sorted(list(set(data)))
     char_to_int = dict((c, i) for i, c in enumerate(words))
     char_to_int[' '] = len(char_to_int) # add spaces to dict
+
+    print(char_to_int)
 
     n_words = len(data)
     n_vocab = len(words)
@@ -168,7 +170,9 @@ def generate_caption(meme_name, meme_ID, meme_weights_file, datadf=datadf, lengt
         pattern = pattern[1:len(pattern)]
     print ("\nDone.")
 
-train_caption("Surprised-Pikachu", "Surprised-Pikachu", 200)
+train_caption("Surprised-Pikachu", "Surprised-Pikachu", 150)
+train_caption("One-Does-Not-Simply", "One-Does-Not-Simply", 150)
+train_caption("216523697", "216523697", 150)
 
 # not over fit
 # generate_caption("surprised_pika", 155067746, "surprised_pika/weights-improvement-90-1.8385.hdf5")
