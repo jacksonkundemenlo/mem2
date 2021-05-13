@@ -18,24 +18,35 @@ def clean_caption(caption):
 # remove punctuation
     # if len(caption)<90:
     #     caption = (90-len(caption)) * 'ඞ' + caption
-    caption = caption.translate(str.maketrans('', '', string.punctuation.replace('|', '')))
-    if '||' in caption:
-        caption = caption.replace('||', ' ')
-    if caption[-1] == '|':
-        caption = caption[:-1]
-    if '|' in caption:
-        caption = caption.replace('|', ' | ')
+    caption = str(caption)
+    caption = caption.translate(str.maketrans('', '', string.punctuation.replace(';', '')))
+    # if '||' in caption:
+    #     caption = caption.replace('||', ' ')
+    # if caption[-1] == '|':
+    #     caption = caption[:-1]
+    # if '|' in caption:
+    #     caption = caption.replace('|', ' | ')
     caption = caption.lower()
+    for char in caption:
+        if char not in 'qwertyuiopasdfghjkl;zxcvbnm1234567890 ':
+            caption = '0'
     return caption
 
-datadf = pd.read_csv('train_gena_24_4000.csv')
-datadf['clean_caption'] = datadf['1'].apply(clean_caption)
+# datadf = pd.read_csv('train_gena_24_4000.csv')
+# datadf['clean_caption'] = datadf['1'].apply(clean_caption)
+
+datadf = pd.read_csv('cap.csv')
+datadf['caption'] = datadf['caption'].apply(clean_caption)
+datadf = datadf[datadf['caption'] != '0']
+# print(string.punctuation)
+
+# print(datadf)
 
 
 def train_caption(meme_name, meme_ID, epochs, datadf=datadf, continue_model=None):
     # read in and clean csv for use
-    datadf = datadf[datadf['0'] == meme_ID]
-    data = ' '.join(datadf['clean_caption'])
+    datadf = datadf[datadf['type'] == meme_ID]
+    data = ' '.join(datadf['caption'])
     data = data.split()
 
     # create mapping of unique words to integers
@@ -82,7 +93,8 @@ def train_caption(meme_name, meme_ID, epochs, datadf=datadf, continue_model=None
     model.compile(loss='categorical_crossentropy', optimizer='adam')
 
     # define the checkpoint
-    filepath= "{meme_name}-weights-improvement-{epoch:02d}-{loss:.4f}.hdf5"
+    filepath = meme_name + "/weights-improvement-{epoch:02d}-{loss:.4f}.hdf5"
+    # /Users/jacksonkunde/Desktop/Senior_CS/mem2/surprised_pika/weights-improvement-610-0.2669--1layerclean.hdf5 
     checkpoint = ModelCheckpoint(filepath, monitor='loss', verbose=1, save_best_only=True, mode='min', period = 10)
     callbacks_list = [checkpoint]
 
@@ -92,7 +104,7 @@ def train_caption(meme_name, meme_ID, epochs, datadf=datadf, continue_model=None
 
     model.fit(X, y, epochs=epochs, batch_size=128, callbacks=callbacks_list)
 
-def generate_caption(meme_name, meme_ID, meme_weights_file, datadf=datadf, length_gen=0):
+def generate_caption(meme_name, meme_ID, meme_weights_file, datadf=datadf, length_gen=12):
 
     # read in and clean csv for use
     datadf = datadf[datadf['0'] == meme_ID]
@@ -115,6 +127,12 @@ def generate_caption(meme_name, meme_ID, meme_weights_file, datadf=datadf, lengt
     int_to_char = dict((i, c) for i, c in enumerate(words))
 
     # pick random meme from dataset to generate new meme
+    start = random.randint(0,len(datadf))
+    input_s = datadf['clean_caption'].iloc[start]
+
+    # input_s = "students acting crazy | teacher pay attention | that kid named attention"
+    # input_seed = input_s.split()
+
     start = random.randint(0,len(datadf))
     input_s = datadf['clean_caption'].iloc[start]
     input_seed = input_s.split()
@@ -150,5 +168,8 @@ def generate_caption(meme_name, meme_ID, meme_weights_file, datadf=datadf, lengt
         pattern = pattern[1:len(pattern)]
     print ("\nDone.")
 
-train_caption("surprised_pika", 155067746, 200)
-# generate_caption("surprised_pika", 155067746, "weights-improvement-90-1.7329--1layerclean.hdf5")
+train_caption("Surprised-Pikachu", "Surprised-Pikachu", 200)
+
+# not over fit
+# generate_caption("surprised_pika", 155067746, "surprised_pika/weights-improvement-90-1.8385.hdf5")
+# generate_caption("surprised_pika", 155067746, "surprised_pika/weights-improvement-100-1.6474.hdf5")
