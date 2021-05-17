@@ -12,6 +12,9 @@ from keras.callbacks import ModelCheckpoint
 from keras.utils import np_utils
 import random
 
+from AddCaption import *
+from tweet import *
+
 def clean_caption(caption):
 # add leading zeros if too short
 # remove excess bars
@@ -106,11 +109,11 @@ def train_caption(meme_name, meme_ID, epochs, datadf=datadf, continue_model=None
 
     model.fit(X, y, epochs=epochs, batch_size=128, callbacks=callbacks_list)
 
-def generate_caption(meme_name, meme_ID, meme_weights_file, datadf=datadf, length_gen=12):
+def generate_caption(meme_ID, meme_weights_file, datadf=datadf):
 
     # read in and clean csv for use
-    datadf = datadf[datadf['0'] == meme_ID]
-    data = ' '.join(datadf['clean_caption'])
+    datadf = datadf[datadf['type'] == meme_ID]
+    data = ' '.join(datadf['caption'])
     data = data.split()
 
     # create mapping of unique words to integers
@@ -130,20 +133,23 @@ def generate_caption(meme_name, meme_ID, meme_weights_file, datadf=datadf, lengt
 
     # pick random meme from dataset to generate new meme
     start = random.randint(0,len(datadf))
-    input_s = datadf['clean_caption'].iloc[start]
+    input_s = datadf['caption'].iloc[start]
 
     # input_s = "students acting crazy | teacher pay attention | that kid named attention"
     # input_seed = input_s.split()
 
     start = random.randint(0,len(datadf))
-    input_s = datadf['clean_caption'].iloc[start]
+    input_s = datadf['caption'].iloc[start]
     input_seed = input_s.split()
 
 
-    while len(input_seed) < length_gen:
+    while len(input_seed) !=12:
         start = random.randint(0,len(datadf))
-        input_s = datadf['clean_caption'].iloc[start]
+        input_s = datadf['caption'].iloc[start]
         input_seed = input_s.split()
+
+    # start = numpy.random.randint(0, len(dataX)-1)
+    # pattern = dataX[start]
 
     input_list = []
     input_list.append([char_to_int[input_s] for input_s in input_seed])
@@ -157,6 +163,7 @@ def generate_caption(meme_name, meme_ID, meme_weights_file, datadf=datadf, lengt
 
     n_vocab = len(words)
 
+    output = []
     # generate characters
     for i in range(len(pattern)):
         x = numpy.reshape(pattern, (1, len(pattern), 1))
@@ -166,14 +173,17 @@ def generate_caption(meme_name, meme_ID, meme_weights_file, datadf=datadf, lengt
         result = int_to_char[index]
         # seq_in = [int_to_char[value] for value in pattern]
         sys.stdout.write(result + ' ')
+        output.append(result + ' ')
         pattern.append(index)
         pattern = pattern[1:len(pattern)]
+    
     print ("\nDone.")
+    return(''.join(output))
 
-train_caption("Surprised-Pikachu", "Surprised-Pikachu", 150)
-train_caption("One-Does-Not-Simply", "One-Does-Not-Simply", 150)
-train_caption("216523697", "216523697", 150)
-
-# not over fit
-# generate_caption("surprised_pika", 155067746, "surprised_pika/weights-improvement-90-1.8385.hdf5")
-# generate_caption("surprised_pika", 155067746, "surprised_pika/weights-improvement-100-1.6474.hdf5")
+def post(meme, weights):
+    caption_z = generate_caption(meme, weights)
+    add_caption(meme, caption_z)
+    print("would you like to tweet?")
+    answer = input()
+    if answer == 'y':
+        tweet_meme()

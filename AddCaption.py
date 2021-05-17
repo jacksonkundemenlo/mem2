@@ -1,21 +1,21 @@
 from PIL import Image, ImageFont, ImageDraw
 
 def add_caption(meme_type, title_text):
-	title_text = title_text.replace(" ; ","\n").replace(" ;", "")
+	title_text = title_text.replace(" ; ","\n").replace(";", "")
 	if meme_type == 'Surprised-Pikachu':
-		box_length = 40
+		box_length = 35
 		box_x = 15
 		box_y = 15
-		text_size = 100
+		text_size = 150
 		image_link = "Surprised-Pikachu.jpeg"
 
 		write(box_length, box_x, box_y, text_size, image_link, title_text)
 		
 	elif meme_type == 'Change-My-Mind':
-		box_length = 30
-		box_x = 300
-		box_y = 550
-		text_size = 40 
+		box_length = 25
+		box_x = 550
+		box_y = 300
+		text_size = 50 
 		image_link = "Change-My-Mind.jpeg"
 
 		write(box_length, box_x, box_y, text_size, image_link, title_text)
@@ -33,14 +33,14 @@ def add_caption(meme_type, title_text):
 		two_captions = title_text.split('\n', 1)
 
 		box_length = 20
-		box_x = 350
-		box_y = 10
+		box_x = 10
+		box_y = 350
 		text_size = 50
 		image_link = "Tuxedo-Winnie-The-Pooh.jpeg"
 		title_text = two_captions[0]
 
-		box_x2 = 350
-		box_y2 = 300
+		box_x2 = 300
+		box_y2 = 350
 		title_text2 = two_captions[1]
 
 		write2(box_length, box_x, box_y, text_size, image_link, title_text, box_x2, box_y2, title_text2)
@@ -62,35 +62,41 @@ def add_caption(meme_type, title_text):
 
 
 	elif meme_type == 'Laughing-Leo':
-		two_captions = title_text.split('\n', 1)
+		title_text = title_text.split('\n')[0]
 
 		box_length = 30
-		box_x = 10
-		box_y = 300
+		box_x = 300
+		box_y = 10
 		text_size = 35
 		image_link = "Laughing-Leo.jpeg"
-		title_text = two_captions[0]
-		title_text2 = two_captions[1]
+		color = 255
 
-		write(box_length, box_x, box_y, text_size, image_link, title_text)
+		write(box_length, box_x, box_y, text_size, image_link, title_text, color=225)
+		
 		
 	elif meme_type == 'One-Does-Not-Simply':
 		two_captions = title_text.split('\n', 1)
 
 		box_length = 35
-		box_x1 = 10
-		box_y1 = 5
-		box_x2 = 10
-		box_y2= 200
+		box_x = 5
+		box_y = 10
+		box_x2 = 200
+		box_y2= 10
 		text_size = 35
 		image_link = "One-Does-Not-Simply.jpeg"
+		color = 255
+		if len(two_captions) >1:
+			title_text = two_captions[0]
+			title_text2 = two_captions[1]
 
-		write(box_length, box_x, box_y, text_size, image_link, two_captions[0])
-		
+			write2(box_length, box_x, box_y, text_size, image_link, title_text, box_x2, box_y2, title_text2, color=225)
+		else:
+			write(box_length, box_x, box_y, text_size, image_link, title_text, color)
+
 	else:
 		print('ok')
 
-def write(box_length, box_x, box_y, text_size, image_link, title_text):
+def write(box_length, box_x, box_y, text_size, image_link, title_text, color = 1):
 	my_image = Image.open(image_link)
 	image_editable = ImageDraw.Draw(my_image)
 	title_font = ImageFont.truetype('impact.ttf', text_size)
@@ -111,10 +117,10 @@ def write(box_length, box_x, box_y, text_size, image_link, title_text):
 	lines.append(title_text[last:element + 1])
 	title_text = '\n'.join(lines)		
 
-	image_editable.text((box_y,box_x), title_text, (1, 1, 1), font=title_font)
+	image_editable.text((box_y,box_x), title_text, (color, color, color), font=title_font)
 	my_image.save("result.jpg")
 
-def write2(box_length1, box_x1, box_y1, text_size1, image_link1, title_text1, box_x2, box_y2, title_text2):
+def write2(box_length1, box_x1, box_y1, text_size1, image_link1, title_text1, box_x2, box_y2, title_text2, color = 1):
 	my_image = Image.open(image_link1)
 	image_editable = ImageDraw.Draw(my_image)
 	title_font = ImageFont.truetype('impact.ttf', text_size1)
@@ -135,7 +141,7 @@ def write2(box_length1, box_x1, box_y1, text_size1, image_link1, title_text1, bo
 	lines.append(title_text1[last:element + 1])
 	title_text1 = '\n'.join(lines)		
 
-	image_editable.text((box_y1,box_x1), title_text1, (1, 1, 1), font=title_font)
+	image_editable.text((box_y1,box_x1), title_text1, (color, color, color), font=title_font)
 
 	count = 0
 	last = 0
@@ -153,8 +159,6 @@ def write2(box_length1, box_x1, box_y1, text_size1, image_link1, title_text1, bo
 	lines.append(title_text2[last:element + 1])
 	title_text2 = '\n'.join(lines)		
 
-	image_editable.text((box_y2,box_x2), title_text2, (1, 1, 1), font=title_font)
+	image_editable.text((box_y2,box_x2), title_text2, (color, color, color), font=title_font)
 
 	my_image.save("result.jpg")
-
-# add_caption("Surprised-Pikachu", "knows about corona virus | pikachu oh my god | ash dont look when pikachu knows about corona virus |")
