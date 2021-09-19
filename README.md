@@ -27,7 +27,7 @@ Finally, we interfaced with the twitter API to directly post the memes.
 
 Example memes can be found at https://twitter.com/AtcsMeme
 
-<img src="https://twitter.com/AtcsMeme/status/1394353390528782339/photo/1" width="300" height=auto>
+![](https://twitter.com/AtcsMeme/status/1394353390528782339/photo/1)
 <img src="https://twitter.com/AtcsMeme/status/1394348500700205057/photo/1" width="300" height=auto>
 <img src="https://twitter.com/AtcsMeme/status/1394347138948026373/photo/1" width="300" height=auto>
 
