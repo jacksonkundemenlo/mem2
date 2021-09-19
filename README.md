@@ -27,10 +27,6 @@ Finally, we interfaced with the twitter API to directly post the memes.
 
 Example memes can be found at https://twitter.com/AtcsMeme
 
-![](https://twitter.com/AtcsMeme/status/1394353390528782339/photo/1)
-<img src="https://twitter.com/AtcsMeme/status/1394348500700205057/photo/1" width="300" height=auto>
-<img src="https://twitter.com/AtcsMeme/status/1394347138948026373/photo/1" width="300" height=auto>
-
 Results: The LSTM generation isn't great, and doesn't mirror functional english well 
 If we were given more time for this project we would scrape more data for each template and spend more time training. We are confident that with those steps the memery could be improved substantially.
 
