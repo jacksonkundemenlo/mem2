@@ -9,6 +9,9 @@ Here are the templates we used:
 Tuxedo Winnie The Pooh: 
 <img title="" src="https://github.com/jacksonkunde/mem2/blob/main/Tuxedo-Winnie-The-Pooh.jpeg" width="300" height=auto>
 
+<p><img src="https://github.com/jacksonkunde/mem2/blob/main/Tuxedo-Winnie-The-Pooh.jpeg" alt="Smiley face" style="float:right;width:300px;height:auto;">
+Tuxedo Winnie The Pooh:</p>
+
 
 
 Surprised Pikachu: 
